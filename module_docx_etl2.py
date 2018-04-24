@@ -1,15 +1,10 @@
 # coding:utf-8
-'''
-version:v1.0
-auth:cainiao
-question:时间匹配函数待优化
-'''
+
 # 导入读取docx的包
 import zipfile
 import xml.etree.ElementTree
 import re
 import datetime
-import traverse_files_name_2_list
 
 # 用于读取docx的相关配置
 WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
@@ -18,7 +13,6 @@ TEXT = WORD_NAMESPACE + 't'
 TABLE = WORD_NAMESPACE + 'tbl'
 ROW = WORD_NAMESPACE + 'tr'
 CELL = WORD_NAMESPACE + 'tc'
-
 
 # 将传入的docx文档解析成tree结构
 def make_docx_tree(file_path):
@@ -86,7 +80,6 @@ def get_issued_by(list_3):
     else:
         return ''
 
-
 # 提取verified_by（审核人）
 def get_verified_by(list_3):
     verified_position = target_positon(list_3, 'VERIFIED BY')
@@ -102,7 +95,6 @@ def get_verified_by(list_3):
             return ''
     else:
         return ''
-
 
 # 提取description
 def get_description(list_3):
@@ -120,15 +112,9 @@ def get_description(list_3):
 # 提取日期，并格式化为2017-12-12的格式
 def get_time(comment_str):
     # 正则匹配时间的列表
-    date_p_list = [ur'19\d{2}-[01]{0,1}\d-[0-3]{0,1}\d|20\d{2}-[01]{0,1}\d-[0-3]{0,1}\d',
-                   ur'[01]{0,1}\d/[0-3]{0,1}\d/19\d{2}|[01]{0,1}\d/[0-3]{0,1}\d/20\d{2}',
-                   ur'[0-3]{0,1}\d\.[01]{0,1}\d\.19\d{2}|[0-3]{0,1}\d\.[01]{0,1}\d\.20\d{2}',
-                   ]
+    date_p_list = [ur'19\d{2}-[01]\d-[0-3]\d|20\d{2}-[01]\d-[0-3]\d', ur'[01]\d/[0-3]\d/19\d{2}|[01]\d/[0-3]\d/20\d{2}']
     # 正则规则对应的时间格式化列表
-    date_str_list = ['%Y-%m-%d',
-                     '%m/%d/%Y',
-                     '%d.%m.%Y',
-                     ]
+    date_str_list = ['%Y-%m-%d', '%m/%d/%Y']
     for i, p in enumerate(date_p_list):
         date_p = re.compile(p)
         goldwind_p = re.compile(ur'goldwind|gold wind', re.I)
@@ -142,7 +128,6 @@ def get_time(comment_str):
                 return ''
     return ''
 
-
 # 计算两个日期时间差
 def compute_days(start_time, end_time):
     days_datetime = end_time - start_time
@@ -151,7 +136,6 @@ def compute_days(start_time, end_time):
         return days
     else:
         return 0
-
 
 def compute_loop_count(comment_content):
     '''
@@ -182,13 +166,12 @@ def compute_loop_count(comment_content):
     if end_time == '':
         end_time = None
     return {
-        # 'comment_content': line_feed_comment_content(comment_content),  # 换行
+        'comment_content': line_feed_comment_content(comment_content),  # 换行
         'start_time': start_time,
         'end_time': end_time,
         'duration': duration,
         'loop_count': loop_count,
     }
-
 
 # 对comment_content评审意见内容换行
 def line_feed_comment_content(comment_content):
@@ -240,24 +223,3 @@ def etl_docx(file_path):
         'verified_by': verified_by,
         'comment_all': comment_all,
     }
-
-
-'''
-66666: u'文档后缀不是docx，无法解析',
-66667: u'无法解析的docx文档',
-66668: u'文档中缺少关键参数VERIFICATION COMMENTS、issued by、verified by',
-'''
-
-file_name_l = traverse_files_name_2_list.file_name_list('../file_position/GW 121-2500 IEC IIIB Sinoma59.5 HH90/',
-                                                        'docx')
-print(file_name_l)
-import time
-
-start_time = time.time()
-for i in file_name_l:
-    path = '../file_position/GW 121-2500 IEC IIIB Sinoma59.5 HH90/' + i
-    l = etl_docx(path)
-    print(l)
-    print i
-end_time = time.time()
-print('cost time: %f' % (end_time - start_time))
