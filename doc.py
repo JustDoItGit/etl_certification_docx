@@ -3,7 +3,7 @@ import sys
 from docx import Document
 
 # 此方法会出现重复，不建议使用
-file = '../file_position/VCS-02590-A010-006_Rev3 签字终版.docx'
+file = '../file_position/VCS-02590-A010-006_缺少DNV.docx'
 document = Document(file)
 tables = document.tables
 

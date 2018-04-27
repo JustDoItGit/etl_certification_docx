@@ -9,7 +9,7 @@ import zipfile
 import xml.etree.ElementTree
 import re
 import datetime
-import traverse_files_name_2_list
+
 
 # 用于读取docx的相关配置
 WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
@@ -235,11 +235,12 @@ def etl_docx(file_path):
             'duration': 0,
             'loop_count': 0,
         }]
-    return {
+    return 60000, {
         'issued_by': issued_by,
         'verified_by': verified_by,
         'comment_all': comment_all,
     }
+
 
 
 '''
@@ -247,17 +248,3 @@ def etl_docx(file_path):
 66667: u'无法解析的docx文档',
 66668: u'文档中缺少关键参数VERIFICATION COMMENTS、issued by、verified by',
 '''
-
-file_name_l = traverse_files_name_2_list.file_name_list('../file_position/GW 121-2500 IEC IIIB Sinoma59.5 HH90/',
-                                                        'docx')
-print(file_name_l)
-import time
-
-start_time = time.time()
-for i in file_name_l:
-    path = '../file_position/GW 121-2500 IEC IIIB Sinoma59.5 HH90/' + i
-    l = etl_docx(path)
-    print(l)
-    print i
-end_time = time.time()
-print('cost time: %f' % (end_time - start_time))
