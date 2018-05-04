@@ -59,7 +59,7 @@ def target_positon(list_3, target_str):
     for t in range(len(list_3)):
         for tr in range(len(list_3[t])):
             for td in range(len(list_3[t][tr])):
-                if target_str in list_3[t][tr][td].upper():
+                if target_str == list_3[t][tr][td].upper()[:len(target_str)]: # -----2018-5-7需要修改的行
                     result_list.append({'t': t, 'tr': tr, 'td': td})
     if len(result_list) == 1:
         # 返回内容所在的下标
@@ -92,7 +92,7 @@ def get_verified_by(list_3):
     verified_position = target_positon(list_3, 'VERIFIED BY')
     if verified_position == 66668:
         return 66668
-    verified_by = list_3[verified_position['td']][verified_position['tr']][verified_position['t']]
+    verified_by = list_3[verified_position['t']][verified_position['tr']][verified_position['td']] # -----2018-5-7需要修改的行
     verified_people_sp = verified_by.split(':')
     if len(verified_people_sp) == 2:
         verified_by_people = verified_people_sp[1].strip()

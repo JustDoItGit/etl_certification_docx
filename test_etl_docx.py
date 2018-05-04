@@ -1,8 +1,11 @@
 # coding:utf-8
 from etl_certification_docx import module_docx_etl
 import traverse_files_name_2_list
+import time
 
-file_path = '../file_position/VCS-02590-A010-006_Rev3 签字终版.docx'
+start_time = time.time()
+
+file_path = '../file_position/Base Frame-PD-PP039140-17J3421-6.VCS_Rev02.docx'
 result = module_docx_etl.etl_docx(file_path)
 print result
 
@@ -22,3 +25,6 @@ for i in file_name_l:
 end_time = time.time()
 print('cost time: %f' % (end_time - start_time))
 '''
+
+end_time = time.time()
+print('cost time: %fs' %(end_time -start_time))
