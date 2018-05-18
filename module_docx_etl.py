@@ -114,6 +114,10 @@ def get_description(list_3):
     for row in list_3[description_position['t']]:
         if len(row) >= 4 and row[1][:3] == 'DNV':
             description_list.append(row[1])
+        ##### add 2018-5-17 001 #####
+        elif len(row) >= 4 and row[1][:17] == 'Reviewed document':
+            description_list.append(row[1])
+        ##### add 2018-5-17 001 #####
     return description_list
 
 
@@ -131,8 +135,13 @@ def get_time(comment_str):
                      ]
     for i, p in enumerate(date_p_list):
         date_p = re.compile(p)
-        goldwind_p = re.compile(ur'goldwind|gold wind', re.I)
+        # error
+        '''
+        goldwind_p = re.compile(ur'DNVGL|Goldwind|DNV GL|DNV|gold wind', re.I)
         date = date_p.findall(goldwind_p.split(comment_str)[0])
+        '''
+        date = date_p.findall(comment_str)
+
         if date:
             t_str = date[0]
             try:
@@ -153,6 +162,21 @@ def compute_days(start_time, end_time):
         return 0
 
 
+# 用于判断每个DNV后面是否跟随时间
+def whether_contain_date(comment_str):
+    # 正则匹配时间的列表
+    date_p_list = [ur'19\d{2}-[01]{0,1}\d-[0-3]{0,1}\d|20\d{2}-[01]{0,1}\d-[0-3]{0,1}\d',
+                   ur'[01]{0,1}\d/[0-3]{0,1}\d/19\d{2}|[01]{0,1}\d/[0-3]{0,1}\d/20\d{2}',
+                   ur'[0-3]{0,1}\d\.[01]{0,1}\d\.19\d{2}|[0-3]{0,1}\d\.[01]{0,1}\d\.20\d{2}',
+                   ]
+    for i, p in enumerate(date_p_list):
+        date_p = re.compile(p)
+        date = date_p.findall(comment_str)
+        if date:
+            return True
+    return False
+
+
 def compute_loop_count(comment_content):
     '''
     计算loop_count（评审意见总轮次数）
@@ -165,6 +189,7 @@ def compute_loop_count(comment_content):
     start_time = ''
     end_time = ''
     duration = 0
+    '''
     st_list = [ur'DNV GL', ur'DNVGL', ur'DNV']
     for st in st_list:
         p = re.compile(st, re.I)
@@ -177,6 +202,18 @@ def compute_loop_count(comment_content):
             if start_time != '' and end_time != '':
                 duration = compute_days(start_time, end_time)
             break
+    '''
+    # error
+    p = re.compile(ur'DNVGL|DNV GL|DNV', re.I)
+    p_find = p.findall(comment_content)
+    if p_find:
+        dnv_list = p.split(comment_content)[1:]
+        dnv_list_new = [i for i in dnv_list if whether_contain_date(i[:30])]
+        loop_count = len(dnv_list_new) - 1
+        start_time = get_time(dnv_list_new[0])
+        end_time = get_time(dnv_list_new[-1])
+        if start_time != '' and end_time != '':
+            duration = compute_days(start_time, end_time)
     if start_time == '':
         start_time = None
     if end_time == '':
@@ -192,7 +229,7 @@ def compute_loop_count(comment_content):
 
 # 对comment_content评审意见内容换行
 def line_feed_comment_content(comment_content):
-    p = re.compile(ur'DNVGL|Goldwind|DNV GL|DNV', re.I)
+    p = re.compile(ur'DNVGL|Goldwind|DNV GL|DNV|gold wind', re.I)
     group_list = p.findall(comment_content)
     line_feed = comment_content
     if group_list:
@@ -203,7 +240,9 @@ def line_feed_comment_content(comment_content):
             say_clean = ''
             for i, val in enumerate(group_list):
                 # \r\n\r\n用于段落间换行
+                ##### add 2018-5-17 002 是否换行的判断 #####
                 say_clean = say_clean + val + ' ' + say_list[i] + '\r\n\r\n'
+                ##### add 2018-5-17 002 是否换行的判断 #####
             line_feed = say_clean
     return line_feed
 

@@ -5,7 +5,7 @@ import time
 
 start_time = time.time()
 
-file_path = '../file_position/Base Frame-PD-PP039140-17J3421-6.VCS_Rev02.docx'
+file_path = '../file_position/Manuals PD-PP039140-17J3421-20.VCS.rev04.docx'
 result = module_docx_etl.etl_docx(file_path)
 print result
 
