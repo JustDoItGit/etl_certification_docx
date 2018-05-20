@@ -10,7 +10,6 @@ import xml.etree.ElementTree
 import re
 import datetime
 
-
 # 用于读取docx的相关配置
 WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 PARA = WORD_NAMESPACE + 'p'
@@ -18,7 +17,6 @@ TEXT = WORD_NAMESPACE + 't'
 TABLE = WORD_NAMESPACE + 'tbl'
 ROW = WORD_NAMESPACE + 'tr'
 CELL = WORD_NAMESPACE + 'tc'
-
 
 # 将传入的docx文档解析成tree结构
 def make_docx_tree(file_path):
@@ -32,7 +30,6 @@ def make_docx_tree(file_path):
     except Exception, e:
         # 无法解析的docx文档
         return 66667
-
 
 # 将内容放到到三维列表里面
 def make_list_3dim(tree):
@@ -52,7 +49,6 @@ def make_list_3dim(tree):
         t += 1
     return list_3dim
 
-
 # 找到提取文档的目标内容起点所在的表格位置
 def target_positon(list_3, target_str):
     result_list = []
@@ -68,7 +64,6 @@ def target_positon(list_3, target_str):
     else:
         # 文件内缺少关键参数，关键参数数量不对
         return 66668
-
 
 # 提取issued_by（发布人）
 def get_issued_by(list_3):
@@ -86,7 +81,6 @@ def get_issued_by(list_3):
     else:
         return ''
 
-
 # 提取verified_by（审核人）
 def get_verified_by(list_3):
     verified_position = target_positon(list_3, 'VERIFIED BY')
@@ -103,7 +97,6 @@ def get_verified_by(list_3):
     else:
         return ''
 
-
 # 提取description
 def get_description(list_3):
     description_position = target_positon(list_3, 'VERIFICATION COMMENTS')
@@ -119,7 +112,6 @@ def get_description(list_3):
             description_list.append(row[1])
         ##### add 2018-5-17 001 #####
     return description_list
-
 
 # 提取日期，并格式化为2017-12-12的格式
 def get_time(comment_str):
@@ -151,7 +143,6 @@ def get_time(comment_str):
                 return ''
     return ''
 
-
 # 计算两个日期时间差
 def compute_days(start_time, end_time):
     days_datetime = end_time - start_time
@@ -160,7 +151,6 @@ def compute_days(start_time, end_time):
         return days
     else:
         return 0
-
 
 # 用于判断每个DNV后面是否跟随时间
 def whether_contain_date(comment_str):
@@ -175,7 +165,6 @@ def whether_contain_date(comment_str):
         if date:
             return True
     return False
-
 
 def compute_loop_count(comment_content):
     '''
@@ -226,7 +215,6 @@ def compute_loop_count(comment_content):
         'loop_count': loop_count,
     }
 
-
 # 对comment_content评审意见内容换行
 def line_feed_comment_content(comment_content):
     p = re.compile(ur'DNVGL|Goldwind|DNV GL|DNV|gold wind', re.I)
@@ -245,7 +233,6 @@ def line_feed_comment_content(comment_content):
                 ##### add 2018-5-17 002 是否换行的判断 #####
             line_feed = say_clean
     return line_feed
-
 
 # main etl主函数
 def etl_docx(file_path):
@@ -279,8 +266,6 @@ def etl_docx(file_path):
         'verified_by': verified_by,
         'comment_all': comment_all,
     }
-
-
 
 '''
 66666: u'文档后缀不是docx，无法解析',
