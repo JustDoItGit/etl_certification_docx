@@ -153,7 +153,7 @@ def compute_days(start_time, end_time):
         return 0
 
 
-def compute_loop_count(comment_content):
+def compute_loop_count(comment_content, comment_number):  # add comment_number
     '''
     计算loop_count（评审意见总轮次数）
     start_time（评审意见起始时间）
@@ -189,6 +189,7 @@ def compute_loop_count(comment_content):
         'end_time': end_time,
         'duration': duration,
         'loop_count': loop_count,
+        'commnet_number': comment_number,  # add comment_number
     }
 
 
@@ -245,7 +246,8 @@ def etl_docx(file_path):
         return 66668, 'Fail'
     comment_all = []
     for i, comment_content in enumerate(description):
-        comment_ = compute_loop_count(comment_content)
+        # i+1 = comment_number
+        comment_ = compute_loop_count(comment_content, i + 1)  # add comment_number
         comment_all.append(comment_)
     if comment_all == []:
         comment_all = [{
@@ -254,6 +256,7 @@ def etl_docx(file_path):
             'end_time': None,
             'duration': 0,
             'loop_count': 0,
+            'comment_number': 0,  # add comment_number
         }]
     return 60000, {
         'issued_by': issued_by,
