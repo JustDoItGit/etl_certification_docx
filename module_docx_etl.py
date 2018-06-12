@@ -1,9 +1,5 @@
 # coding:utf-8
-'''
-version:v1.0
-auth:cainiao
-question:时间匹配函数待优化
-'''
+
 # 导入读取docx的包
 import zipfile
 import xml.etree.ElementTree
@@ -128,7 +124,7 @@ def get_time(comment_str):
                    ur'19\d{2}/[01]{0,1}\d/[0-3]{0,1}\d|20\d{2}/[01]{0,1}\d/[0-3]{0,1}\d',
                    ur'[01]{0,1}\d/[0-3]{0,1}\d/19\d{2}|[01]{0,1}\d/[0-3]{0,1}\d/20\d{2}',
                    ]
-    # 正则规则对应的时间格式化列表 DNV GL 05-08-2016
+    # 正则规则对应的时间格式化列表
     date_str_list = ['%Y-%m-%d', '%d-%m-%Y', '%Y.%m.%d', '%d.%m.%Y', '%Y/%m/%d', '%m/%d/%Y', ]
     for i, p in enumerate(date_p_list):
         date_p = re.compile(p)
@@ -153,7 +149,7 @@ def compute_days(start_time, end_time):
         return 0
 
 
-def compute_loop_count(comment_content, comment_number):  # add comment_number
+def compute_loop_count(comment_content, comment_number):
     '''
     计算loop_count（评审意见总轮次数）
     start_time（评审意见起始时间）
@@ -184,12 +180,12 @@ def compute_loop_count(comment_content, comment_number):  # add comment_number
     if end_time == '':
         end_time = None
     return {
-        # 'comment_content': line_feed_comment_content(comment_content),  # 换行
+        'comment_content': line_feed_comment_content(comment_content),  # 换行
         'start_time': start_time,
         'end_time': end_time,
         'duration': duration,
         'loop_count': loop_count,
-        'commnet_number': comment_number,  # add comment_number
+        'commnet_number': comment_number,
     }
 
 
@@ -247,7 +243,7 @@ def etl_docx(file_path):
     comment_all = []
     for i, comment_content in enumerate(description):
         # i+1 = comment_number
-        comment_ = compute_loop_count(comment_content, i + 1)  # add comment_number
+        comment_ = compute_loop_count(comment_content, i + 1)
         comment_all.append(comment_)
     if comment_all == []:
         comment_all = [{
@@ -256,7 +252,7 @@ def etl_docx(file_path):
             'end_time': None,
             'duration': 0,
             'loop_count': 0,
-            'comment_number': 0,  # add comment_number
+            'comment_number': 0,
         }]
     return 60000, {
         'issued_by': issued_by,
